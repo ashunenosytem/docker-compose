@@ -1,0 +1,35 @@
+services:
+  fend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+    depends_on:
+      - fend
+      - bend
+    ports:
+      - 80:80
+  bend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    expose:
+      - "5000"
+    environment:
+      - MONGO_URI=mongodb://db:27017/expense_db
+      - JWT_SECRET=e581372412881a8a196c46b1d9d13f45a42be030085c4ba2baad205a8bd822c3
+    depends_on:
+      - db
+    volumes:
+      - expense_uploads:/app/uploads
+
+  db:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+volumes:
+  mongo_data:
+  expense_uploads:

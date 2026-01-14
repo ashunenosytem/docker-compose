@@ -1,0 +1,58 @@
+# =========================
+# Node / React
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+coverage/
+.env
+.env.*
+
+# =========================
+# Docker
+# =========================
+Dockerfile.*
+docker-compose.override.yml
+*.log
+.docker/
+.dockerignore
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# =========================
+# Git
+# =========================
+.git/
+.gitignore.lock
+
+# =========================
+# Runtime / Cache
+# =========================
+.cache/
+.tmp/
+temp/
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Terraform / AWS (optional – if used)
+# =========================
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
