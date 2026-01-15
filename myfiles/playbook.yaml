@@ -1,0 +1,76 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Download Docker Compose binary
+      ansible.builtin.get_url:
+        url: "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64"
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'  # This makes it executable
+
+    - name: Create a symbolic link to /usr/bin
+      ansible.builtin.file:
+        src: /usr/local/bin/docker-compose
+        dest: /usr/bin/docker-compose
+        state: link
+
+    - name: Install Docker
+      ansible.builtin.yum:
+        name: docker
+        state: present
+        update_cache: yes
+    - name: Ensure Docker is started and enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Add user to docker group
+      ansible.builtin.user:
+        name: ec2-user
+        groups: docker
+        append: yes
+    - name: copying docker-compose.yaml
+      ansible.builtin.copy:
+        src: /home/ec2-user/docker-compose/myfiles/docker-compose.yaml
+        dest: /home/ec2-user/docker-compose.yaml
+    - name: copying nginx confs
+      ansible.builtin.copy:
+        src: /home/ec2-user/docker-compose/myfiles/conf.d/my_config.conf
+        dest: /home/ec2-user/conf.d/my_config.conf
+    - name: Execute the command in remote shell
+      ansible.builtin.shell:
+      args:
+        chdir: /home/ec2-user/
+        cmd: docker-compose up -d --scale fend=2 --scale bend=2
+
+# ---
+# - hosts: all
+#   become: true
+#   vars:
+#     # 1. Start and Enable the service (Defaults are true, but good to be explicit)
+#     docker_service_state: started
+#     docker_service_enabled: true
+
+#     # 2. Add users to the docker group
+#     docker_users:
+#       - ec2-user  # Replace with your actual username
+
+#   roles:
+#     - geerlingguy.docker
+
+
+
+
+
+
+# [ec2-user@ip-10-10-1-21 ~]$ cat playbook.yaml 
+# ---
+# - hosts: p1
+#   become: true
+#   tasks:
+#     - name: uninstall Java 17 
+#       ansible.builtin.yum:
+#         name: java-17-amazon-corretto*
+#         state: absent
+#         update_cache: yes
